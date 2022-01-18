@@ -1,0 +1,84 @@
+plugins {
+    id("java")
+    id("checkstyle")
+    id("com.github.spotbugs").version("5.0.3")
+    id("com.github.johnrengelman.shadow").version("7.0.0")
+}
+
+setGroup("net.ryzech")
+setVersion("1.0-SNAPSHOT")
+
+compileJava {
+    getOptions().setEncoding("UTF-8")
+}
+
+java {
+    setSourceCompatibility(JavaVersion.VERSION_17)
+    setTargetCompatibility(JavaVersion.VERSION_17)
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        setUrl("https://nexus.velocitypowered.com/repository/maven-public/")
+        setName("VelocityPowered")
+    }
+    maven {
+        setUrl("https://jitpack.io")
+        setName("JDA")
+    }
+}
+
+dependencies {
+
+    implementation("org.bstats:bstats-velocity:2.2.1")
+    implementation "net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT"
+    implementation("com.github.DV8FromTheWorld:JDA:v5.0.0-alpha.4")
+    annotationProcessor("com.velocitypowered:velocity-api:3.1.0")
+    compileOnly("com.velocitypowered:velocity-api:3.1.0")
+    compileOnly('org.spongepowered:configurate-yaml:4.1.2')
+    compileOnly('com.github.spotbugs:spotbugs-annotations:4.5.3')
+    compileOnly('net.luckperms:api:5.3')
+}
+
+shadowJar {
+    getArchiveClassifier().set("")
+    minimize()
+    relocate("org.bstats", "net.ryzech.staffchat.bstats")
+}
+
+checkstyle {
+    setToolVersion("9.2")
+    setConfigFile(file("${this.getRootDir()}/config/checkstyle/checkstyle.xml"))
+    setConfigProperties("configDirectory": "${this.getRootDir()}/config/checkstyle")
+    setMaxErrors(0)
+    setMaxWarnings(0)
+}
+
+spotbugs {
+    ignoreFailures = false
+    showStackTraces = true
+    showProgress = true
+    effort = 'default'
+    reportLevel = 'default'
+    visitors = [ 'FindSqlInjection', 'SwitchFallthrough' ]
+    omitVisitors = [ 'FindNonShortCircuit' ]
+    reportsDir = file("$buildDir/spotbugs")
+    includeFilter = file("include.xml")
+    excludeFilter = file("exclude.xml")
+    baselineFile = file("baseline.xml")
+    onlyAnalyze = ['net.ryzech.staffchat.*' ]
+    maxHeapSize = '1g'
+    extraArgs = [ '-nested:false' ]
+    jvmArgs = [ '-Duser.language=ja' ]
+}
+
+sourceSets.main.getJava().srcDir(getTasks().register("generateTemplates", Copy) { task ->
+    task.getInputs().properties("version": getVersion())
+    task.from(file("src/main/templates"))
+        .into(getLayout().getBuildDirectory().dir("generated/sources/templates"))
+        .expand("version": getVersion())
+}.map {
+    it.getOutputs()
+})
+assemble.dependsOn(shadowJar)

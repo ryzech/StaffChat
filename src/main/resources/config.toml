@@ -1,0 +1,24 @@
+[appearance]
+  # symbol to activate staff chat/
+  staffchat-symbol = "@"
+  # what users on the Discord side will see.
+  mc-to-discord = "**{player}** » {message}"
+  # what other minecraft users (with the permission) will see.
+  # have to use legacy color codes here as luckperms doesn't use Adventure Components.
+  mc-format= "&8[&9&l&oStaff&8] {prefix}{player} &7> &f{message}"
+  # what users on minecraft will see when Discord users send something.
+  discord-to-mc = "<dark_gray>[<blue><bold><italic>Discord Staff</italic></bold><dark_gray>] <dark_aqua>{player} <gray>> <white>{message}"
+[discord]
+  # Discord bot token.
+  token = "yourtoken"
+  # channel for the staff chat messages to send to.
+  staff-channel = "012345678910"
+  # Bot Activity status (ex. playing Minecraft).
+  activity = "your.server.com"
+[toggle]
+  # enable or disable the toggle command.
+  enabled = true
+[messages]
+  no-permission = "<red>Sorry, but you don't have permission to run this command.</red>"
+  toggle-off = "<red>Auto staff chat disabled.</red>"
+  toggle-on = "<green>Auto staff chat enabled!</green>"
