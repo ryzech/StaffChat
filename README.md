@@ -1,4 +1,4 @@
-![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?) [![Build Status](https://ci.ryzech.net/job/StaffChat/badge/icon)](https://ci.ryzech.net/job/StaffChat/)
+![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?) [![Build Status](https://ci.ryzech.net/buildStatus/icon?job=StaffChat)](https://ci.ryzech.net/job/StaffChat/)
 # StaffChat
 
 Lightweight Velocity StaffChat plugin. Supports Discord and LuckPerms prefixes.
