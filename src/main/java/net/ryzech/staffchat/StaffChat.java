@@ -91,7 +91,7 @@ public class StaffChat {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) throws LoginException {
-        this.metricsFactory.make(this, 12708);
+        this.metricsFactory.make(this, 13997);
         server.getEventManager().register(this, new ChatListener());
         jda = JDABuilder.createDefault(config.getString("discord.token")).build();
         jda.getPresence().setActivity(Activity.playing(config.getString("discord.activity")));
