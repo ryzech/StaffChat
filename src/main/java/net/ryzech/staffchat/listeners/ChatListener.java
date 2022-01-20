@@ -11,6 +11,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.ryzech.staffchat.StaffChat;
 import net.ryzech.staffchat.commands.ToggleStaffChat;
+import net.ryzech.staffchat.utils.LuckPermsUtil;
+import net.ryzech.staffchat.utils.Permissions;
+
+import static net.ryzech.staffchat.commands.MuteStaffChat.mutedStaffList;
 
 public class ChatListener extends ListenerAdapter {
     public Toml config = StaffChat.getInstance().getConfig();
@@ -18,36 +22,41 @@ public class ChatListener extends ListenerAdapter {
     @Subscribe
     public void onPlayerChat(PlayerChatEvent event)
     {
-        Player player = (Player) event.getPlayer();
+        Player player = event.getPlayer();
         String message = event.getMessage();
         message = message.replace(config.getString("appearance.staffchat-symbol"), "");
         String mcFormat = config.getString("appearance.mc-format");
         mcFormat = mcFormat.replace("{player}", player.getUsername());
         mcFormat = mcFormat.replace("{message}", message);
-        mcFormat = mcFormat.replace("{prefix}", StaffChat.getInstance().getPrefix(player));
+        mcFormat = mcFormat.replace("{prefix}", LuckPermsUtil.getPrefix(player));
         String mcToDiscord = config.getString("appearance.mc-to-discord");
         mcToDiscord = mcToDiscord.replace("{player}", player.getUsername());
         mcToDiscord = mcToDiscord.replace("{message}", message);
         TextChannel staffChat = StaffChat.getInstance().getJda().getTextChannelById(config.getString("discord.staff-channel"));
-        if(!(player instanceof Player))
+        String finalMcFormat = mcFormat;
+        if(ToggleStaffChat.toggleStaffList.contains(player.getUniqueId()))
         {
-            return;
-        } else
+            sendStaffMessage(event, player, mcToDiscord, staffChat, finalMcFormat);
+        } else if(event.getMessage().startsWith(config.getString("appearance.staffchat-symbol")))
         {
-            if(ToggleStaffChat.toggleStaffList.contains(player.getUniqueId()))
+            sendStaffMessage(event, player, mcToDiscord, staffChat, finalMcFormat);
+        }
+    }
+
+    private void sendStaffMessage(PlayerChatEvent event, Player player, String mcToDiscord, TextChannel staffChat, String finalMcFormat) {
+        if(player.hasPermission(Permissions.STAFFCHAT_USE))
+        {
+            event.setResult(PlayerChatEvent.ChatResult.message(""));
+            staffChat.sendMessageFormat(mcToDiscord).queue();
+            StaffChat.getInstance().getServer().getAllPlayers().forEach(allPlayers ->
             {
-                event.setResult(PlayerChatEvent.ChatResult.message(""));
-                player.sendMessage(LegacyComponentSerializer.legacy('&').deserialize(mcFormat));
-                staffChat.sendMessageFormat(mcToDiscord).queue();
-            } else if(event.getMessage().startsWith(config.getString("appearance.staffchat-symbol")))
-            {
-                if(player.hasPermission("staffchat.admin"))
+                if(allPlayers.hasPermission(Permissions.STAFFCHAT_SEE))
                 {
-                    event.setResult(PlayerChatEvent.ChatResult.message(""));
-                    player.sendMessage(LegacyComponentSerializer.legacy('&').deserialize(mcFormat));
-                    staffChat.sendMessageFormat(mcToDiscord).queue();
+                    if(!(mutedStaffList.contains(allPlayers.getUniqueId()))) {
+                        allPlayers.sendMessage(LegacyComponentSerializer.legacy('&').deserialize(finalMcFormat));
+                    }
                 }
-            }
+            });
         }
     }
 
@@ -60,7 +69,7 @@ public class ChatListener extends ListenerAdapter {
             String finalDiscordToMc = discordToMc;
             StaffChat.getInstance().getServer().getAllPlayers().forEach(player ->
             {
-                if (player.hasPermission("staffchat.admin"))
+                if (player.hasPermission(Permissions.STAFFCHAT_SEE))
                 {
                     player.sendMessage(MiniMessage.get().deserialize(finalDiscordToMc));
                 }

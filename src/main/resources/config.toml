@@ -24,3 +24,5 @@
   no-permission = "<red>Sorry, but you don't have permission to run this command.</red>"
   toggle-off = "<red>Auto staff chat disabled.</red>"
   toggle-on = "<green>Auto staff chat enabled!</green>"
+  mute-off = "<red>Staff chat unmuted.</red>"
+  mute-on = "<green>Staff chat muted.</green>"

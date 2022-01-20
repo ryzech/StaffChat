@@ -5,7 +5,7 @@ plugins {
 }
 
 setGroup("net.ryzech")
-setVersion("1.0-SNAPSHOT")
+setVersion("1.1")
 
 compileJava {
     getOptions().setEncoding("UTF-8")

@@ -12,26 +12,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ToggleStaffChat implements SimpleCommand {
-    public static List<UUID> toggleStaffList = new ArrayList<>();
+public class MuteStaffChat implements SimpleCommand
+{
+    public static List<UUID> mutedStaffList = new ArrayList<>();
     public Toml config = StaffChat.getInstance().getConfig();
 
     public void execute(SimpleCommand.Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
-        if (!config.getBoolean("toggle.enabled")) return;
         if (!(source instanceof Player)) return;
         Player player = (Player) source;
         if (!player.hasPermission(Permissions.STAFFCHAT_USE)) {
             player.sendMessage(MiniMessage.get().deserialize(config.getString("messages.no-permission")));
             return;
         }
-        if (toggleStaffList.contains(player.getUniqueId())) {
-            toggleStaffList.remove(player.getUniqueId());
-            player.sendMessage(MiniMessage.get().deserialize(config.getString("messages.toggle-off")));
+        if (mutedStaffList.contains(player.getUniqueId())) {
+            mutedStaffList.remove(player.getUniqueId());
+            player.sendMessage(MiniMessage.get().deserialize(config.getString("messages.mute-off")));
         } else {
-            toggleStaffList.add(player.getUniqueId());
-            player.sendMessage(MiniMessage.get().deserialize(config.getString("messages.toggle-on")));
+            mutedStaffList.add(player.getUniqueId());
+            player.sendMessage(MiniMessage.get().deserialize(config.getString("messages.mute-on")));
         }
     }
 }
