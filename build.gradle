@@ -1,6 +1,5 @@
 plugins {
     id("java")
-    id("checkstyle")
     id("com.github.spotbugs").version("5.0.3")
     id("com.github.johnrengelman.shadow").version("7.0.0")
 }
@@ -45,14 +44,6 @@ shadowJar {
     getArchiveClassifier().set("")
     minimize()
     relocate("org.bstats", "net.ryzech.staffchat.bstats")
-}
-
-checkstyle {
-    setToolVersion("9.2")
-    setConfigFile(file("${this.getRootDir()}/config/checkstyle/checkstyle.xml"))
-    setConfigProperties("configDirectory": "${this.getRootDir()}/config/checkstyle")
-    setMaxErrors(0)
-    setMaxWarnings(0)
 }
 
 spotbugs {

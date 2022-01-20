@@ -17,6 +17,7 @@ import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.ryzech.staffchat.commands.ToggleStaffChat;
 import net.ryzech.staffchat.listeners.ChatListener;
+import org.bstats.charts.SimplePie;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 
 @Plugin(
         id = "staffchat",
@@ -45,6 +47,7 @@ public class StaffChat {
     private Toml config;
     private final Metrics.Factory metricsFactory;
     private JDA jda;
+    private Instant startTime;
 
     private Toml loadConfig(Path path) {
         File folder = path.toFile();
@@ -91,10 +94,19 @@ public class StaffChat {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) throws LoginException {
-        this.metricsFactory.make(this, 13997);
+        this.startTime = Instant.now();
+        getLogger().info("Plugin enabled (took " + startTime + ")");
+        Metrics metrics = metricsFactory.make(this, 13997);
+        metrics.addCustomChart(new SimplePie("playerAmount", () -> String.valueOf(server.getPlayerCount())));
+        metrics.addCustomChart(new SimplePie("velocityVersion", () -> server.getVersion().toString()));
+        metrics.addCustomChart(new SimplePie("javaVersion", () -> System.getProperty("java.version")));
+        metrics.addCustomChart(new SimplePie("osName", () -> System.getProperty("os.name")));
+        metrics.addCustomChart(new SimplePie("osArch", () -> System.getProperty("os.arch")));
+        metrics.addCustomChart(new SimplePie("osVersion", () -> System.getProperty("os.version")));
+        metrics.addCustomChart(new SimplePie("coreCount", () -> String.valueOf(Runtime.getRuntime().availableProcessors())));
         server.getEventManager().register(this, new ChatListener());
         jda = JDABuilder.createDefault(config.getString("discord.token")).build();
-        jda.getPresence().setActivity(Activity.playing(config.getString("discord.activity")));
+        jda.getPresence().setActivity(Activity.of(Activity.ActivityType.valueOf(config.getString("discord.activity-type").toUpperCase()), config.getString("discord.activity")));
         jda.addEventListener(new ChatListener());
     }
 

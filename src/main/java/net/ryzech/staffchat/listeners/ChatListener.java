@@ -16,7 +16,8 @@ public class ChatListener extends ListenerAdapter {
     public Toml config = StaffChat.getInstance().getConfig();
 
     @Subscribe
-    public void onPlayerChat(PlayerChatEvent event) {
+    public void onPlayerChat(PlayerChatEvent event)
+    {
         Player player = (Player) event.getPlayer();
         String message = event.getMessage();
         message = message.replace(config.getString("appearance.staffchat-symbol"), "");
@@ -28,15 +29,20 @@ public class ChatListener extends ListenerAdapter {
         mcToDiscord = mcToDiscord.replace("{player}", player.getUsername());
         mcToDiscord = mcToDiscord.replace("{message}", message);
         TextChannel staffChat = StaffChat.getInstance().getJda().getTextChannelById(config.getString("discord.staff-channel"));
-        if(!(player instanceof Player)) {
+        if(!(player instanceof Player))
+        {
             return;
-        } else {
-            if(ToggleStaffChat.toggleStaffList.contains(player.getUniqueId())) {
+        } else
+        {
+            if(ToggleStaffChat.toggleStaffList.contains(player.getUniqueId()))
+            {
                 event.setResult(PlayerChatEvent.ChatResult.message(""));
                 player.sendMessage(LegacyComponentSerializer.legacy('&').deserialize(mcFormat));
                 staffChat.sendMessageFormat(mcToDiscord).queue();
-            } else if(event.getMessage().startsWith(config.getString("appearance.staffchat-symbol"))) {
-                if(player.hasPermission("staffchat.admin")) {
+            } else if(event.getMessage().startsWith(config.getString("appearance.staffchat-symbol")))
+            {
+                if(player.hasPermission("staffchat.admin"))
+                {
                     event.setResult(PlayerChatEvent.ChatResult.message(""));
                     player.sendMessage(LegacyComponentSerializer.legacy('&').deserialize(mcFormat));
                     staffChat.sendMessageFormat(mcToDiscord).queue();
@@ -45,14 +51,17 @@ public class ChatListener extends ListenerAdapter {
         }
     }
 
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onMessageReceived(MessageReceivedEvent event)
+    {
         if(!event.getMessage().getAuthor().isBot()) {
             String discordToMc = config.getString("appearance.discord-to-mc");
             discordToMc = discordToMc.replace("{player}", event.getMember().getEffectiveName());
             discordToMc = discordToMc.replace("{message}", event.getMessage().getContentDisplay());
             String finalDiscordToMc = discordToMc;
-            StaffChat.getInstance().getServer().getAllPlayers().forEach(player -> {
-                if (player.hasPermission("staffchat.admin")) {
+            StaffChat.getInstance().getServer().getAllPlayers().forEach(player ->
+            {
+                if (player.hasPermission("staffchat.admin"))
+                {
                     player.sendMessage(MiniMessage.get().deserialize(finalDiscordToMc));
                 }
             });

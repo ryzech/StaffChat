@@ -13,6 +13,8 @@
   token = "yourtoken"
   # channel for the staff chat messages to send to.
   staff-channel = "012345678910"
+  # Sets activity type, ex: WATCHING, PLAYING, STREAMING
+  activity-type = "PLAYING"
   # Bot Activity status (ex. playing Minecraft).
   activity = "your.server.com"
 [toggle]
