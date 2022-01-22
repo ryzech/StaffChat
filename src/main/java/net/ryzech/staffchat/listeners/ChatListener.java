@@ -4,6 +4,7 @@ import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
+import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -67,13 +68,15 @@ public class ChatListener extends ListenerAdapter {
             discordToMc = discordToMc.replace("{player}", event.getMember().getEffectiveName());
             discordToMc = discordToMc.replace("{message}", event.getMessage().getContentDisplay());
             String finalDiscordToMc = discordToMc;
-            StaffChat.getInstance().getServer().getAllPlayers().forEach(player ->
-            {
-                if (player.hasPermission(Permissions.STAFFCHAT_SEE))
+            if(event.getChannel().getId().equalsIgnoreCase(config.getString("discord.staff-channel"))) {
+                StaffChat.getInstance().getServer().getAllPlayers().forEach(player ->
                 {
-                    player.sendMessage(MiniMessage.get().deserialize(finalDiscordToMc));
-                }
-            });
+                    if (player.hasPermission(Permissions.STAFFCHAT_SEE))
+                    {
+                        player.sendMessage(MiniMessage.get().deserialize(finalDiscordToMc));
+                    }
+                });
+            }
         }
     }
 }
