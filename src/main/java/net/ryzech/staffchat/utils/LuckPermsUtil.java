@@ -7,11 +7,20 @@ import net.luckperms.api.model.user.User;
 import net.ryzech.staffchat.StaffChat;
 
 public class LuckPermsUtil {
-    public static String getPrefix(Player player) {
-        LuckPerms luckPerms = StaffChat.getInstance().getLuckPermsProvider();
+    LuckPerms luckPerms = StaffChat.getInstance().getLuckPermsProvider();
+    public static String getPrefix(Player player) 
+    {
         User user = luckPerms.getUserManager().getUser(player.getUniqueId());
         if (user.getCachedData().getMetaData().getPrefix() == null)
             return "";
         return user.getCachedData().getMetaData().getPrefix();
+    }
+
+    public static String getSuffix(Player player) 
+    {
+        User user = luckPerms.getUserManager().getUser(player.getUniqueId());
+        if (user.getCachedData().getMetaData().getSuffix() == null)
+            return "";
+        return user.getCachedData().getMetaData().getSuffix();
     }
 }

@@ -30,6 +30,7 @@ public class ChatListener extends ListenerAdapter {
         mcFormat = mcFormat.replace("{player}", player.getUsername());
         mcFormat = mcFormat.replace("{message}", message);
         mcFormat = mcFormat.replace("{prefix}", LuckPermsUtil.getPrefix(player));
+        mcFormat = mcFormat.replace("{suffix}", LuckPermsUtil.getSuffix(player));
         String mcToDiscord = config.getString("appearance.mc-to-discord");
         mcToDiscord = mcToDiscord.replace("{player}", player.getUsername());
         mcToDiscord = mcToDiscord.replace("{message}", message);
