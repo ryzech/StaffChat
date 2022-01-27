@@ -7,7 +7,7 @@ import net.luckperms.api.model.user.User;
 import net.ryzech.staffchat.StaffChat;
 
 public class LuckPermsUtil {
-    LuckPerms luckPerms = StaffChat.getInstance().getLuckPermsProvider();
+    private static LuckPerms luckPerms = StaffChat.getInstance().getLuckPermsProvider();
     public static String getPrefix(Player player) 
     {
         User user = luckPerms.getUserManager().getUser(player.getUniqueId());
