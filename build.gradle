@@ -2,6 +2,8 @@ plugins {
     id("java")
     id("com.github.spotbugs").version("5.0.3")
     id("com.github.johnrengelman.shadow").version("7.0.0")
+    id("maven-publish")
+    id("org.cadixdev.licenser").version("0.6.1")
 }
 
 setGroup("net.ryzech")
@@ -72,4 +74,35 @@ sourceSets.main.getJava().srcDir(getTasks().register("generateTemplates", Copy) 
 }.map {
     it.getOutputs()
 })
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = getGroup()
+            artifactId = 'staffchat'
+            version = getVersion()
+            from components.java
+
+            pom {
+                name = 'StaffChat'
+                description = 'StaffChat plugin for Velocity, has LuckPerms API support.'
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username = "$usr"
+                password = "$pwd"
+            }
+
+            url = "https://maven.ryzech.net/snapshots"
+        }
+    }
+    license {
+        header = file('LICENSE')
+        include '**/*.java'
+    }
+}
+
 assemble.dependsOn(shadowJar)
