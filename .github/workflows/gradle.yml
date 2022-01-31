@@ -18,3 +18,10 @@ jobs:
       run: chmod +x gradlew
     - name: Build artifacts
       run: ./gradlew shadowJar
+    
+    - name: Deploy Artifacts
+      env:
+        DEPLOY_CREDS: ${{ secrets.DEPLOY_CREDS }}
+      run: |
+        echo ${DEPLOY_CREDS} > gradle.properties
+        ./gradlew publish
