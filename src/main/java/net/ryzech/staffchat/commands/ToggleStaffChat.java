@@ -47,15 +47,15 @@ public class ToggleStaffChat implements SimpleCommand {
         if (!(source instanceof Player)) return;
         Player player = (Player) source;
         if (!player.hasPermission(Permissions.STAFFCHAT_USE)) {
-            player.sendMessage(MiniMessage.get().deserialize(config.getString("messages.no-permission")));
+            player.sendMessage(MiniMessage.miniMessage().deserialize(config.getString("messages.no-permission")));
             return;
         }
         if (toggleStaffList.contains(player.getUniqueId())) {
             toggleStaffList.remove(player.getUniqueId());
-            player.sendMessage(MiniMessage.get().deserialize(config.getString("messages.toggle-off")));
+            player.sendMessage(MiniMessage.miniMessage().deserialize(config.getString("messages.toggle-off")));
         } else {
             toggleStaffList.add(player.getUniqueId());
-            player.sendMessage(MiniMessage.get().deserialize(config.getString("messages.toggle-on")));
+            player.sendMessage(MiniMessage.miniMessage().deserialize(config.getString("messages.toggle-on")));
         }
     }
 }

@@ -47,15 +47,15 @@ public class MuteStaffChat implements SimpleCommand
         if (!(source instanceof Player)) return;
         Player player = (Player) source;
         if (!player.hasPermission(Permissions.STAFFCHAT_USE)) {
-            player.sendMessage(MiniMessage.get().deserialize(config.getString("messages.no-permission")));
+            player.sendMessage(MiniMessage.miniMessage().deserialize(config.getString("messages.no-permission")));
             return;
         }
         if (mutedStaffList.contains(player.getUniqueId())) {
             mutedStaffList.remove(player.getUniqueId());
-            player.sendMessage(MiniMessage.get().deserialize(config.getString("messages.mute-off")));
+            player.sendMessage(MiniMessage.miniMessage().deserialize(config.getString("messages.mute-off")));
         } else {
             mutedStaffList.add(player.getUniqueId());
-            player.sendMessage(MiniMessage.get().deserialize(config.getString("messages.mute-on")));
+            player.sendMessage(MiniMessage.miniMessage().deserialize(config.getString("messages.mute-on")));
         }
     }
 }

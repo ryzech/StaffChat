@@ -97,7 +97,7 @@ public class ChatListener extends ListenerAdapter {
                 {
                     if (player.hasPermission(Permissions.STAFFCHAT_SEE))
                     {
-                        player.sendMessage(MiniMessage.get().deserialize(finalDiscordToMc));
+                        player.sendMessage(MiniMessage.miniMessage().deserialize(finalDiscordToMc));
                     }
                 });
             }
