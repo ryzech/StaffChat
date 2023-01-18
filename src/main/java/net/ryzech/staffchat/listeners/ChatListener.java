@@ -47,7 +47,7 @@ public class ChatListener extends ListenerAdapter {
     public void onPlayerChat(PlayerChatEvent event)
     {
         Player player = event.getPlayer();
-        String message = event.getMessage();
+        String message = event.getResult().getMessage().toString();
         message = message.replace(config.getString("appearance.staffchat-symbol"), "");
         String mcFormat = config.getString("appearance.mc-format");
         mcFormat = mcFormat.replace("{player}", player.getUsername());
@@ -60,12 +60,9 @@ public class ChatListener extends ListenerAdapter {
         TextChannel staffChat = StaffChat.getInstance().getJda().getTextChannelById(config.getString("discord.staff-channel"));
         String finalMcFormat = mcFormat;
         if(ToggleStaffChat.toggleStaffList.contains(player.getUniqueId()))
-        {
             sendStaffMessage(event, player, mcToDiscord, staffChat, finalMcFormat);
-        } else if(event.getMessage().startsWith(config.getString("appearance.staffchat-symbol")))
-        {
+        else if(event.getMessage().startsWith(config.getString("appearance.staffchat-symbol")))
             sendStaffMessage(event, player, mcToDiscord, staffChat, finalMcFormat);
-        }
     }
 
     private void sendStaffMessage(PlayerChatEvent event, Player player, String mcToDiscord, TextChannel staffChat, String finalMcFormat) {
@@ -76,31 +73,25 @@ public class ChatListener extends ListenerAdapter {
             StaffChat.getInstance().getServer().getAllPlayers().forEach(allPlayers ->
             {
                 if(allPlayers.hasPermission(Permissions.STAFFCHAT_SEE))
-                {
-                    if(!(mutedStaffList.contains(allPlayers.getUniqueId()))) {
-                        allPlayers.sendMessage(LegacyComponentSerializer.legacy('&').deserialize(finalMcFormat));
-                    }
-                }
+                    allPlayers.sendMessage(LegacyComponentSerializer.legacy('&').deserialize(finalMcFormat));
             });
         }
     }
 
+    //TODO: test & figure out if message content will be sent through to minecraft with these small changes.
     public void onMessageReceived(MessageReceivedEvent event)
     {
         if(!event.getMessage().getAuthor().isBot()) {
             String discordToMc = config.getString("appearance.discord-to-mc");
-            discordToMc = discordToMc.replace("{player}", event.getMember().getEffectiveName());
-            discordToMc = discordToMc.replace("{message}", event.getMessage().getContentDisplay());
+            discordToMc = discordToMc.replace("{player}", event.getMember().getNickname());
+            discordToMc = discordToMc.replace("{message}", event.getMessage().getContentStripped());
             String finalDiscordToMc = discordToMc;
-            if(event.getChannel().getId().equalsIgnoreCase(config.getString("discord.staff-channel"))) {
+            if(event.getChannel().getId().equalsIgnoreCase(config.getString("discord.staff-channel")))
                 StaffChat.getInstance().getServer().getAllPlayers().forEach(player ->
                 {
                     if (player.hasPermission(Permissions.STAFFCHAT_SEE))
-                    {
                         player.sendMessage(MiniMessage.miniMessage().deserialize(finalDiscordToMc));
-                    }
                 });
-            }
         }
     }
 }

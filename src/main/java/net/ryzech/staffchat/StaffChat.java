@@ -111,6 +111,8 @@ public class StaffChat {
             this.getLogger().error("Please update your Velocity binary to 3.1.x", e);
             this.server.shutdown();
         }
+        ToggleStaffChat.toggleStaffList.clear();
+        MuteStaffChat.mutedStaffList.clear();
         config = loadConfig(dataDirectory);
         commandManager.register("sctoggle", new ToggleStaffChat());
         commandManager.register("scmute", new MuteStaffChat());
