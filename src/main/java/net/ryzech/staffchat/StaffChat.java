@@ -35,6 +35,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.ryzech.staffchat.commands.MuteStaffChat;
@@ -133,8 +134,10 @@ public class StaffChat {
         metrics.addCustomChart(new SimplePie("coreCount", () -> String.valueOf(Runtime.getRuntime().availableProcessors())));
         server.getEventManager().register(this, new ChatListener());
         jda = JDABuilder.createDefault(config.getString("discord.token")).build();
+        jda = JDABuilder.createLight(config.getString("discord.token"), GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
+                .addEventListeners(new ChatListener())
+                .build();
         jda.getPresence().setActivity(Activity.of(Activity.ActivityType.valueOf(config.getString("discord.activity-type").toUpperCase()), config.getString("discord.activity")));
-        jda.addEventListener(new ChatListener());
     }
 
     private static void setInstance(StaffChat instance) {

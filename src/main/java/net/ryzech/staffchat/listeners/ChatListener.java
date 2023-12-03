@@ -38,6 +38,8 @@ import net.ryzech.staffchat.commands.ToggleStaffChat;
 import net.ryzech.staffchat.utils.LuckPermsUtil;
 import net.ryzech.staffchat.utils.Permissions;
 
+import java.util.Objects;
+
 import static net.ryzech.staffchat.commands.MuteStaffChat.mutedStaffList;
 
 public class ChatListener extends ListenerAdapter {
@@ -83,7 +85,7 @@ public class ChatListener extends ListenerAdapter {
     {
         if(!event.getMessage().getAuthor().isBot()) {
             String discordToMc = config.getString("appearance.discord-to-mc");
-            discordToMc = discordToMc.replace("{player}", event.getMember().getNickname());
+            discordToMc = discordToMc.replace("{player}", Objects.requireNonNull(event.getMember()).getUser().getName());
             discordToMc = discordToMc.replace("{message}", event.getMessage().getContentStripped());
             String finalDiscordToMc = discordToMc;
             if(event.getChannel().getId().equalsIgnoreCase(config.getString("discord.staff-channel")))
