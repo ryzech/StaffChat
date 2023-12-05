@@ -49,7 +49,7 @@ public class ChatListener extends ListenerAdapter {
     public void onPlayerChat(PlayerChatEvent event)
     {
         Player player = event.getPlayer();
-        String message = event.getResult().getMessage().toString();
+        String message = event.getMessage();
         message = message.replace(config.getString("appearance.staffchat-symbol"), "");
         String mcFormat = config.getString("appearance.mc-format");
         mcFormat = mcFormat.replace("{player}", player.getUsername());
@@ -70,12 +70,13 @@ public class ChatListener extends ListenerAdapter {
     private void sendStaffMessage(PlayerChatEvent event, Player player, String mcToDiscord, TextChannel staffChat, String finalMcFormat) {
         if(player.hasPermission(Permissions.STAFFCHAT_USE))
         {
-            event.setResult(PlayerChatEvent.ChatResult.message(""));
+            event.setResult(PlayerChatEvent.ChatResult.denied());
             staffChat.sendMessageFormat(mcToDiscord).queue();
             StaffChat.getInstance().getServer().getAllPlayers().forEach(allPlayers ->
             {
                 if(allPlayers.hasPermission(Permissions.STAFFCHAT_SEE))
-                    allPlayers.sendMessage(LegacyComponentSerializer.legacy('&').deserialize(finalMcFormat));
+                    if(!mutedStaffList.contains(allPlayers.getUniqueId()))
+                        allPlayers.sendMessage(LegacyComponentSerializer.legacy('&').deserialize(finalMcFormat));
             });
         }
     }
@@ -86,7 +87,7 @@ public class ChatListener extends ListenerAdapter {
         if(!event.getMessage().getAuthor().isBot()) {
             String discordToMc = config.getString("appearance.discord-to-mc");
             discordToMc = discordToMc.replace("{player}", Objects.requireNonNull(event.getMember()).getUser().getName());
-            discordToMc = discordToMc.replace("{message}", event.getMessage().getContentStripped());
+            discordToMc = discordToMc.replace("{message}", event.getMessage().getContentDisplay());
             String finalDiscordToMc = discordToMc;
             if(event.getChannel().getId().equalsIgnoreCase(config.getString("discord.staff-channel")))
                 StaffChat.getInstance().getServer().getAllPlayers().forEach(player ->
